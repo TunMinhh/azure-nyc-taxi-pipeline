@@ -2,9 +2,15 @@ sources:
   yellow:
     url: "https://d37ci6vzurychx.cloudfront.net/trip-data/yellow_tripdata_{month}.parquet"
     monthly: true
+    format: parquet
+    bronze_table: yellow_trips_raw
   green:
     url: "https://d37ci6vzurychx.cloudfront.net/trip-data/green_tripdata_{month}.parquet"
     monthly: true
+    format: parquet
+    bronze_table: green_trips_raw
   zones:
     url: "https://d37ci6vzurychx.cloudfront.net/misc/taxi_zone_lookup.csv"
     monthly: false
+    format: csv
+    bronze_table: taxi_zone_lookup_raw
