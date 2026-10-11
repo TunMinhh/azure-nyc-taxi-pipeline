@@ -62,4 +62,4 @@ Create a job `nyctaxi_elt` with four notebook tasks chained `land_files → load
 
 ## 6. Power BI
 
-Connect Power BI Desktop to a Databricks SQL Warehouse (Get data → Azure Databricks → Import), load the Gold tables and the two location views, and create the relationships described in [Data model](data_model.md).
+Connect Power BI Desktop to a Databricks SQL Warehouse (Get data → Azure Databricks → Import), load the Gold tables and the two location views, and create the relationships described in [Data model](../README.md#data-model-gold).

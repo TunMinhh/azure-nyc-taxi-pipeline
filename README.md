@@ -17,7 +17,7 @@ A config-driven Medallion pipeline that ingests NYC TLC yellow and green taxi tr
 
 **Tech stack:** Azure Databricks (Unity Catalog) · ADLS Gen2 · PySpark · Delta Lake · Auto Loader · Power BI
 
-# Data model (Gold)
+## Data model (Gold)
  
 ![Star schema](docs/img/star_schema.png)
  
@@ -36,7 +36,7 @@ docs/              setup, data quality, data model, design decisions, roadmap
 
 1. Create the Azure resources, catalog and schemas: [docs/setup.md](docs/setup.md).
 2. Add this repo as a Git folder in Databricks.
-3. Run the notebooks in order with `catalog = nyctaxi_dev`, `start_month = 2025-01`, `end_month = 2025-12`, or run the `nyctaxi_monthly` job.
+3. Run the notebooks in order with `catalog = nyctaxi_dev`, `start_month = 2025-01`, `end_month = 2025-12`.
 
 ## Documentation
 
@@ -47,8 +47,27 @@ docs/              setup, data quality, data model, design decisions, roadmap
 | [Data dictionary](docs/data-dict.md) | TLC field definitions |
 
 ## Result
+
+Full year 2025 on Azure Databricks (12 monthly files per taxi type), run by the job `nyc_taxi_elt`.
+
+| | Yellow | Green |
+| --- | ---: | ---: |
+| Bronze rows | 48,722,602 | 591,375 |
+| Rows with schema mismatch (`_rescued_data`) | 0 | 0 |
+| Silver valid rows | 45,871,737 | 561,747 |
+| Quarantined rows | 2,850,865 | 29,628 |
+| Pass rate | 94.15% | 94.99% |
+
 ![Lineage](docs/img/lineage.png)
 ![Databrick Jobs](docs/img/databrick_jobs.png)
+
+## Limitations
+
+- **Revenue is slightly overstated (~1.7%).** Some trips have a reversal entry (a row with negative `total_amount`). The reversal goes to quarantine, but the original trip stays in `fact_trip` and still counts as revenue. Estimated on yellow 2025-01; the fix is an `is_reversed` flag (matching on vendor, pickup, dropoff, pickup zone and opposite fare).
+- **Flex Fare rows with a negative fare have revenue = 0.** Their money columns do not add up, so they count as trips but not as revenue.
+- **One vendor is under-represented.** About 545k trips with duration ≤ 0 are quarantined; 98% of them come from VendorID 7, so its trips are undercounted.
+- **Gold is rebuilt in full on every run.** Fine at ~46M rows; an incremental MERGE by month would be needed at larger scale.
+- **No automated tests or CI yet.** Correctness is checked by the reconciliation and integrity checks in the notebooks.
 
 ## Data source
 
