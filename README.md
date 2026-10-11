@@ -2,11 +2,11 @@
 
 A config-driven Medallion pipeline that ingests NYC TLC yellow and green taxi trips (2025) into Delta Lake on Azure Databricks, applies explicit data-quality rules with a quarantine table, and models the result as a star schema for Power BI.
 
-![Power BI overview](docs/images/dashboard_overview.png)
+![Power BI overview](docs/img/dashboard_overview.png)
 
 ## Architecture
 
-![Architecture](docs/images/architecture.png)
+![Architecture](docs/img/architecture.png)
 
 | Layer | What it holds | How it is written |
 | --- | --- | --- |
@@ -19,7 +19,7 @@ A config-driven Medallion pipeline that ingests NYC TLC yellow and green taxi tr
 
 # Data model (Gold)
  
-![Star schema](images/star_schema.png)
+![Star schema](docs/img/star_schema.png)
  
 `fact_trip` has one row per valid trip. It holds keys and measures only; Power BI resolves the joins through relationships.
 
@@ -47,8 +47,8 @@ docs/              setup, data quality, data model, design decisions, roadmap
 | [Data dictionary](docs/data-dict.md) | TLC field definitions |
 
 ## Result
-![Lineage](docs/images/lineage.png)
-![Databrick Jobs](docs/images/databrick_jobs.png)
+![Lineage](docs/img/lineage.png)
+![Databrick Jobs](docs/img/databrick_jobs.png)
 
 ## Data source
 

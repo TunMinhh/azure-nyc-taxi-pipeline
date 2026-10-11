@@ -35,4 +35,4 @@ Valid rows: yellow 2025-01 **3,323,172 (95.6%)**; full year **45,871,737 (94.15%
 
 The yearly rate of `invalid_trip_duration` (1.15% of yellow) is far higher than in January (0.09%); see finding 8. Deliberately **not** rejected: null or odd `passenger_count` (driver-entered; Gold measures use 1–6 only), null `payment_type` in green, zones 264/265 (Unknown / Outside NYC), and negative fares with a non-negative total.
 
-Field definitions: [raw-data-dictionary/data-dict.md](raw-data-dictionary/data-dict.md).
+Field definitions: [raw-data-dictionary/data-dict.md](data-dict.md).

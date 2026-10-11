@@ -8,7 +8,7 @@
 
 ## 1. Azure resources (Portal)
 
-Screenshots of each step are in [`docs/img/setup/`](docs/img/setup/).
+Screenshots of each step are in [`docs/img/setup/`](img/setup/).
 
 1. Resource group, region `eastasia`.   (Student Tier account doesn't allow to use SEA server)
 2. Storage account: ADLS Gen2 (hierarchical namespace on), LRS, Hot, with containers `landing`, `bronze`, `silver`, `gold`.
