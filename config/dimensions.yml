@@ -1,4 +1,4 @@
-# Code labels from the official TLC data dictionary (docs/raw-data-dictionary/data-dict.md)
+# Code labels from the official TLC data dictionary (docs/data-dict.md)
 # -1 = unknown member: used when the code is null in Silver
 
 payment:

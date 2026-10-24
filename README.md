@@ -29,7 +29,7 @@ A config-driven Medallion pipeline that ingests NYC TLC yellow and green taxi tr
 config/            sources.yml, dimensions.yml
 src/nyctaxi/       landing.py, bronze.py, silver.py, gold.py   (all logic)
 notebooks/         01_land_files → 02_bronze → 03_silver → 04_gold   (thin shells)
-docs/              setup, data quality, data model, design decisions, roadmap
+docs/              setup, data quality, data dictionary
 ```
 
 ## Quick start
