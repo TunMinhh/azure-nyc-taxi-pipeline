@@ -58,7 +58,7 @@ If `02_bronze` fails the first time a source gains a new column, run it again: A
 
 ## 5. Schedule it (Databricks Job)
 
-Create a job `nyc_taxi_etl` with four notebook tasks chained `land_files → bronze → silver → gold`, on a all-purpose cluster, with job parameters `catalog`, `start_month`, `end_month`. For a monthly run, set `start_month` to the new month and leave `end_month` empty.
+Create a job `nyc_taxi_elt` with four notebook tasks chained `landing → bronze → silver → gold`, on an all-purpose cluster, with job parameters `catalog`, `start_month`, `end_month`. For a monthly run, set `start_month` to the new month and leave `end_month` empty.
 
 ## 6. Power BI
 

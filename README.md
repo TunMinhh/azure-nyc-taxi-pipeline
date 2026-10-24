@@ -38,6 +38,8 @@ docs/              setup, data quality, data dictionary
 2. Add this repo as a Git folder in Databricks.
 3. Run the notebooks in order with `catalog = nyctaxi_dev`, `start_month = 2025-01`, `end_month = 2025-12`.
 
+P/S: the notebook's default catalog is `workspace` due to test run on Databricks Free Edition, remember to change it to your catalog before running 
+
 ## Documentation
 
 | Document | Content |
