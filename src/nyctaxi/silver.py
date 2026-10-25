@@ -1,6 +1,6 @@
 import re
 from pyspark.sql import functions as F 
-from pyspark.sql import SparkSession, DataFrame
+from pyspark.sql import SparkSession, DataFrame, Window
 from delta.tables import DeltaTable
 
 # SILVER_SCHEMA using list instead of dict because list can maintain the order of columns
@@ -150,6 +150,16 @@ def add_derived(df: DataFrame) -> DataFrame:
     )
 
 
+def add_trip_id(df: DataFrame) -> DataFrame:
+    parts = [F.coalesce(F.col(c).cast("string"), F.lit("")) for c in TRIP_ID_COLUMNS]
+    return df.withColumn("trip_id", F.sha2(F.concat_ws("|", *parts), 256))
+
+def add_dup_rank(df: DataFrame) -> DataFrame:
+    w = Window.partitionBy('trip_id').orderBy(F.col('passenger_count').desc(), F.col('tip_amount').desc())   
+    # because i found that "passenger_count" often has strange value (might be because the driver mistype and can be changed later) and it outside of trip_id hash columns so i chose it for duplication check
+    df_dup_rank = df.withColumn("_dup_rank", F.row_number().over(w))                                            
+    return df_dup_rank
+
 
 def add_reject_reason(df: DataFrame) -> DataFrame:
     in_file_month = F.to_date("pickup_ts").between(
@@ -165,6 +175,10 @@ def add_reject_reason(df: DataFrame) -> DataFrame:
         F.when(
             F.col("_rescued_data").isNotNull(),
             "schema_mismatch"
+        )
+        .when(     
+            F.col("_dup_rank") > 1,
+            "duplicate_trip_id"
         )
         .when(
             F.col("_file_month").isNull()
@@ -194,12 +208,7 @@ def add_reject_reason(df: DataFrame) -> DataFrame:
             F.col("total_amount") < 0,
             "negative_total_amount_review"
         )
-    )
-
-def add_trip_id(df: DataFrame) -> DataFrame:
-    parts = [F.coalesce(F.col(c).cast("string"), F.lit("")) for c in TRIP_ID_COLUMNS]
-    return df.withColumn("trip_id", F.sha2(F.concat_ws("|", *parts), 256))
-
+    ).drop("_dup_rank")                  # drop right after done using
 
 
 def build_silver_trips(df: DataFrame, taxi_type: str, month: str) -> DataFrame:
@@ -210,7 +219,7 @@ def build_silver_trips(df: DataFrame, taxi_type: str, month: str) -> DataFrame:
     if one_month.isEmpty():
         raise ValueError(f"No Bronze rows for {taxi_type} {month}")
 
-    return add_trip_id(add_reject_reason(add_derived(standardize(one_month, taxi_type))))
+    return add_reject_reason(add_dup_rank(add_trip_id(add_derived(standardize(one_month, taxi_type)))))
 
 
 def split_valid_rejected(tagged: DataFrame) -> tuple[DataFrame, DataFrame]:
@@ -218,7 +227,6 @@ def split_valid_rejected(tagged: DataFrame) -> tuple[DataFrame, DataFrame]:
     valid = (
         tagged.filter(F.col("dq_reason").isNull())
         .drop(*TEMP_COLUMNS)
-        .dropDuplicates(["trip_id"])        # MERGE fails if two source rows share a trip_id
     )
 
     rejected = (
