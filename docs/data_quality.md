@@ -24,12 +24,17 @@ Profiling was done on yellow 2025-01 (3,475,226 rows) and green 2025-01 (48,326 
 | Order | `dq_reason` | Rejects when | Yellow 2025-01 | Yellow 2025 | Green 2025 |
 | --- | --- | --- | ---: | ---: | ---: |
 | 1 | `schema_mismatch` | `_rescued_data` is not null | 0 | 0 | 0 |
-| 2 | `missing_file_month_or_pickup_ts` | file month or pickup time is missing | 0 | 0 | 0 |
-| 3 | `pickup_outside_file_month` | pickup is more than 1 day outside the file's month | 0 | 8 | 76 |
-| 4 | `invalid_trip_duration` | null, ≤ 0 or > 360 minutes | 3,254 | 561,220 | 4,383 |
-| 5 | `invalid_trip_distance` | null, ≤ 0 or > 200 miles | 90,302 | 1,388,886 | 24,107 |
-| 6 | `missing_total_amount` | total is null | 0 | 0 | 0 |
-| 7 | `negative_total_amount_review` | total < 0 (reversal entry) | 58,498 | 900,751 | 1,062 |
+| 2 | `duplicate_trip_id` | another row in the same file has the same `trip_id` and ranks higher | 0 | 0 | 0 |
+| 3 | `missing_file_month_or_pickup_ts` | file month or pickup time is missing | 0 | 0 | 0 |
+| 4 | `pickup_outside_file_month` | pickup is more than 1 day outside the file's month | 0 | 8 | 76 |
+| 5 | `invalid_trip_duration` | null, ≤ 0 or > 360 minutes | 3,254 | 561,220 | 4,383 |
+| 6 | `invalid_trip_distance` | null, ≤ 0 or > 200 miles | 90,302 | 1,388,886 | 24,107 |
+| 7 | `missing_total_amount` | total is null | 0 | 0 | 0 |
+| 8 | `negative_total_amount_review` | total < 0 (reversal entry) | 58,498 | 900,751 | 1,062 |
+
+**Duplicates are quarantined, not dropped.** `trip_id` is a hash of the trip's identifying columns. When several rows share it, one is kept (ranked by `passenger_count` non-null first, then highest `tip_amount`) and the others go to quarantine as `duplicate_trip_id`. 2025 has none, but a future duplicate will be visible instead of silently removed.
+
+**Every row is accounted for.** For each taxi type × month, the Silver notebook checks `input rows = valid + quarantined` before writing, and fails the run if they differ.
 
 Valid rows: yellow 2025-01 **3,323,172 (95.6%)**; full year **45,871,737 (94.15%)** yellow and **561,747 (94.99%)** green.
 
