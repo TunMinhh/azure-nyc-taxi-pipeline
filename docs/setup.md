@@ -48,7 +48,7 @@ Run the notebooks in order. Widgets (parameters) are at the top of each notebook
 | `01_land_files` | `catalog`, `sources` (`yellow,green,zones`), `start_month`, `end_month` | files in `/Volumes/<catalog>/landing/raw_files/<source>/` |
 | `02_bronze` | `catalog`, `sources` | `bronze.yellow_trips_raw`, `bronze.green_trips_raw`, `bronze.taxi_zone_lookup_raw` |
 | `03_silver` | `catalog`, `start_month`, `end_month` (empty = one month), `sources` (`yellow,green`) | `silver.trips`, `silver.trips_quarantine`, `silver.taxi_zones` |
-| `04_gold` | `catalog` | `gold.fact_trip`, 6 dimensions, 2 views; asserts row count, orphan keys and unique `trip_id` |
+| `04_gold` | `catalog` | `gold.fact_trip`, 6 dimensions, 2 views |
 
 Example for the whole of 2025: `catalog = nyctaxi_dev`, `start_month = 2025-01`, `end_month = 2025-12`.
 

@@ -34,10 +34,10 @@ Profiling was done on yellow 2025-01 (3,475,226 rows) and green 2025-01 (48,326 
 
 **Duplicates are quarantined, not dropped.** `trip_id` is a hash of the trip's identifying columns. When several rows share it, one is kept (ranked by `passenger_count` non-null first, then highest `tip_amount`) and the others go to quarantine as `duplicate_trip_id`. 2025 has none, but a future duplicate will be visible instead of silently removed.
 
-**Every row is accounted for.** For each taxi type × month, the Silver notebook checks `input rows = valid + quarantined` before writing, and fails the run if they differ.
+**Every row ends up in exactly one table.** `dq_reason` is either null (`silver.trips`) or not null (`trips_quarantine`), and duplicates are quarantined instead of dropped. Reconciliation against Bronze after the write is planned.
 
 Valid rows: yellow 2025-01 **3,323,172 (95.6%)**; full year **45,871,737 (94.15%)** yellow and **561,747 (94.99%)** green.
 
-The yearly rate of `invalid_trip_duration` (1.15% of yellow) is far higher than in January (0.09%); see finding 8. Deliberately **not** rejected: null or odd `passenger_count` (driver-entered; Gold measures use 1–6 only), null `payment_type` in green, zones 264/265 (Unknown / Outside NYC), and negative fares with a non-negative total.
+The yearly rate of `invalid_trip_duration` (1.15% of yellow) is far higher than in January (0.09%); see finding 8. Deliberately **not** rejected: null or odd `passenger_count` (driver-entered), null `payment_type` in green, zones 264/265 (Unknown / Outside NYC), and negative fares with a non-negative total.
 
 Field definitions: [docs/data-dict.md](data-dict.md).
