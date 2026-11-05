@@ -78,9 +78,9 @@ Full year 2025 on Azure Databricks (12 monthly files per taxi type), run by the 
 
 ## Limitations
 
-- **Revenue is slightly overstated (~1.7%).** Some trips have a reversal entry (a row with negative `total_amount`). The reversal goes to quarantine, but the original trip stays in `fact_trip` and still counts as revenue. Estimated on yellow 2025-01; the fix is an `is_reversed` flag (matching on vendor, pickup, dropoff, pickup zone and opposite fare).
+- **Revenue is overstated by an estimated 1.76% (about $22.6M).** Some trips have a reversal entry (a row with negative total_amount). The reversal goes to quarantine, but the original trip stays in fact_tripand still counts as revenue. Estimated on full-year 2025 by matching on vendor, pickup, dropoff, pickup zone and opposite fare; the fix is anis_reversed flag.
 - **Flex Fare rows with a negative fare have revenue = 0.** Their money columns do not add up, so they count as trips but not as revenue.
-- **One vendor is under-represented.** About 536k trips with duration ≤ 0 are quarantined; 98% of them come from VendorID 7, so its trips are undercounted.
+- **One vendor is under-represented.** About 548k trips with duration ≤ 0 are quarantined; 98% of them come from VendorID 7, so its trips are undercounted.
 - **Gold is rebuilt in full on every run.** Fine at ~46M rows; an incremental MERGE by month would be needed at larger scale.
 - **Notebooks and Auto Loader are not unit-tested.** CI tests the logic in `src/` on a local Spark; the Databricks-only parts (Auto Loader, Unity Catalog views, notebook wiring) are checked by the job run and the assertions in the notebooks.
 

@@ -12,7 +12,7 @@ Profiling was done on yellow 2025-01 (3,475,226 rows) and green 2025-01 (48,326 
 6. **Month edges are real.** 22 trips in the January file start on the evening of Dec 31 or just after midnight on Feb 1. Trips up to one day outside the file month are kept.
 7. **Schema is stable in 2025.** Auto Loader's `_rescued_data` is empty for all 12 yellow files.
 8. **One vendor drives the duration rejects (found in the full-year run).** Rules were set on January, where `invalid_trip_duration` was 0.09% of yellow trips. Over 2025 it reached 561,220 rows (1.15%), rising from 3,254 in January to 56k–70k per month from May on. Splitting the rejects shows two separate problems:
-    - **Duration ≤ 0: 536k rows, 98% from VendorID 7 (Helix).** The count grows month by month, which points to a change in how this provider records timestamps rather than to driver behaviour.
+    - **Duration ≤ 0: 546k rows, 98% from VendorID 7 (Helix).** The count grows month by month, which points to a change in how this provider records timestamps rather than to driver behaviour.
     - **Duration > 6 hours: about 1.2k rows every month, mostly VendorID 2.** The median is 1,408 minutes (23.5 hours) and the 90th percentile 1,437 minutes, so these are almost always a drop-off stamped on the next day or a meter left running.
 
     The quarantine table made this visible: the rows were not silently dropped, and a single `groupBy` on `dq_reason`, month and vendor explained them.
